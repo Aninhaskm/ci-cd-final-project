@@ -57,3 +57,26 @@ spec:
           python3 -m pip install --upgrade pip wheel
           pip install -r requirements.txt
           nosetests $(params.args)
+
+---
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: buildah
+spec:
+  params:
+    - name: IMAGE
+      description: The image to build and push
+      type: string
+    - name: DOCKERFILE
+      default: ./Dockerfile
+      type: string
+    - name: CONTEXT
+      default: .
+      type: string
+  steps:
+    - name: build-and-push
+      image: quay.io/buildah/stable
+      script: |
+        buildah bud --layers -t $(params.IMAGE) -f $(params.DOCKERFILE) $(params.CONTEXT)
+        buildah push $(params.IMAGE)
