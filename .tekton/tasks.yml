@@ -74,9 +74,18 @@ spec:
     - name: CONTEXT
       default: .
       type: string
+    - name: STORAGE_DRIVER
+      description: The storage driver used by Buildah
+      default: vfs
+      type: string
   steps:
     - name: build-and-push
       image: quay.io/buildah/stable
+      securityContext:
+        privileged: false
       script: |
-        buildah bud --layers -t $(params.IMAGE) -f $(params.DOCKERFILE) $(params.CONTEXT)
-        buildah push $(params.IMAGE)
+        buildah bud --storage-driver=$(params.STORAGE_DRIVER) \
+          -t $(params.IMAGE) \
+          -f $(params.DOCKERFILE) \
+          $(params.CONTEXT)
+        buildah push --storage-driver=$(params.STORAGE_DRIVER) $(params.IMAGE)
