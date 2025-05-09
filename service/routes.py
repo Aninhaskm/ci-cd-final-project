@@ -99,6 +99,7 @@ def update_counters(name):
     counter = COUNTER[name]
     return jsonify(name=name, counter=counter)
 
+
 ############################################################
 # Delete counters
 ############################################################
